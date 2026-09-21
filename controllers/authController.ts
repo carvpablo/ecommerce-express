@@ -1,8 +1,9 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../db.js";
 import { generateToken } from "../util/generateToken.js";
+import { Request, Response } from "express";
 
-export const signIn = async (req, res) => {
+export const signIn = async (req: Request, res: Response) => {
   try {
     const { name, email, password } = req.body;
 
@@ -28,7 +29,7 @@ export const signIn = async (req, res) => {
   }
 };
 
-export const logIn = async (req, res) => {
+export const logIn = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
@@ -57,7 +58,7 @@ export const logIn = async (req, res) => {
   }
 };
 
-export const logOut = async (req, res) => {
+export const logOut = async (req: Request, res: Response) => {
   try {
     res.clearCookie("jwtToken", {
       httpOnly: true,

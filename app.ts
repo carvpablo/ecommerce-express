@@ -18,7 +18,7 @@ app.use(cookieParser());
 
 app.use("/auth", authRouter);
 app.use("/cart", validateToken, cartRouter);
-app.use("/products", validateToken, productsRouter);
+app.use("/products", productsRouter);
 app.use("/users", validateToken, userRouter);
 app.use("/orders", validateToken, orderRouter);
 

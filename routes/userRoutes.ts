@@ -7,10 +7,10 @@ import {
 
 const router = express.Router();
 
-router.get("/get", getUserById);
+router.get("/:id", getUserById);
 
-router.put("/update", updateUser);
+router.put("/", updateUser);
 
-router.delete("/delete", deleteUser);
+router.delete("/:id", deleteUser);
 
 export default router;

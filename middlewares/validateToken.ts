@@ -1,7 +1,12 @@
 import jwt from "jsonwebtoken";
 import "dotenv/config";
+import { Request, Response, NextFunction } from "express";
 
-export const validateToken = (req, res, next) => {
+export const validateToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   const authorization = req.headers.authorization;
   let token;
 
@@ -16,7 +21,11 @@ export const validateToken = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error("JWT_SECRET environment variable is missing!");
+    }
+    const decoded = jwt.verify(token, secret) as any;
 
     req.user = decoded;
 

@@ -8,9 +8,9 @@ import {
 
 const router = express.Router();
 
-router.get("/get", getProducts);
+router.get("/", getProducts);
 
-router.post("/add", addProduct);
+router.post("/", addProduct);
 
 router.patch("/:id", updateProduct);
 
