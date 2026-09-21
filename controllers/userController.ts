@@ -1,8 +1,13 @@
 import { prisma } from "../db.js";
+import { Request, Response } from "express";
 
-export const getUserById = async (req, res) => {
+export const getUserById = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
+    const id = req.params.id;
+
+    if (typeof id !== "string") {
+      return res.status(400).json({ error: "Invalid ID" });
+    }
 
     const user = await prisma.user.findUnique({
       where: {
@@ -20,7 +25,15 @@ export const getUserById = async (req, res) => {
   }
 };
 
-export const updateUser = async (req, res) => {
+interface updateUserBody {
+  name: string;
+  email: string;
+}
+
+export const updateUser = async (
+  req: Request<{}, {}, updateUserBody>,
+  res: Response,
+) => {
   try {
     const { name, email } = req.body;
     const user = await prisma.user.update({
@@ -34,7 +47,7 @@ export const updateUser = async (req, res) => {
     });
 
     return res.status(200).json({ message: "User updated successfully" });
-  } catch (err) {
+  } catch (err: any) {
     if (err.code === "P2025") {
       return res.status(404).json({ error: "User not found" });
     }
@@ -42,9 +55,13 @@ export const updateUser = async (req, res) => {
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
+    const id = req.params.id;
+
+    if (typeof id !== "string") {
+      return res.status(400).json({ error: "Invalid ID" });
+    }
 
     const user = await prisma.user.delete({
       where: {
@@ -52,9 +69,11 @@ export const deleteUser = async (req, res) => {
       },
     });
 
-    res.status(500).json({ message: "User  deleted successfully" });
-  } catch (err) {
-    return res.status(404).json({ error: "User not found" });
+    return res.status(500).json({ message: "User  deleted successfully" });
+  } catch (err: any) {
+    if (err.code === "P2025") {
+      return res.status(404).json({ error: "User not found" });
+    }
+    return res.status(500).json({ error: "Error deleting user" });
   }
-  return res.status(500).json({ error: "Error deleting user" });
 };

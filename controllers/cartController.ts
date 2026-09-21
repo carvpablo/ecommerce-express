@@ -1,10 +1,11 @@
 import { prisma } from "../db.js";
+import { Request, Response } from "express";
 
-export const getCart = async (req, res) => {
+export const getCart = async (req: Request, res: Response) => {
   try {
     const cart = await prisma.cart.findUnique({
       where: {
-        userId: req.body.userId,
+        userId: req.user?.id,
       },
       include: {
         products: {
@@ -20,9 +21,24 @@ export const getCart = async (req, res) => {
   }
 };
 
-export const addToCart = async (req, res) => {
+interface AddToCartBody {
+  cartId: string;
+  productId: string;
+  quantity: number;
+}
+
+export const addToCart = async (
+  req: Request<{}, {}, AddToCartBody>,
+  res: Response,
+) => {
   try {
     const { cartId, productId, quantity = 1 } = req.body;
+
+    if (!cartId || !productId) {
+      return res
+        .status(400)
+        .json({ error: "cartId and productId are required" });
+    }
 
     const itemQuantity = Number(quantity);
 
@@ -57,9 +73,13 @@ export const addToCart = async (req, res) => {
   }
 };
 
-export const deleteFromCart = async (req, res) => {
+export const deleteFromCart = async (req: Request, res: Response) => {
   try {
-    const id = Number(req.params.id);
+    const id = req.params.id;
+
+    if (typeof id !== "string") {
+      return res.status(400).json({ error: "Invalid ID" });
+    }
 
     const deleteItemFromCart = await prisma.cartItem.delete({
       where: {

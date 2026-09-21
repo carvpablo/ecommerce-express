@@ -1,6 +1,8 @@
+import { CartItem, Product } from "@prisma/client";
 import { prisma } from "../db.js";
+import { Request, Response } from "express";
 
-export const createOrder = async (req, res) => {
+export const createOrder = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id || req.body.userId;
 
@@ -76,10 +78,15 @@ export const createOrder = async (req, res) => {
   }
 };
 
-export const deleteOrder = async (req, res) => {
+export const deleteOrder = async (req: Request, res: Response) => {
   try {
-    const id = req.params.id;
-    const userId = req.user.id;
+    const id = req.params?.id;
+
+    if (typeof id !== "string") {
+      return res.status(400).json({ error: "Invalid order ID" });
+    }
+
+    const userId = req.user?.id;
 
     const order = await prisma.order.findUnique({
       where: {
