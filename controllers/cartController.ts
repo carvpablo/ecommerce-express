@@ -92,3 +92,37 @@ export const deleteFromCart = async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Error deleting item from cart" });
   }
 };
+
+export const updateCartItemQuantity = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const { quantity } = req.body;
+
+    if (typeof id !== "string") {
+      return res.status(400).json({ error: "Invalid ID" });
+    }
+
+    const newQuantity = Number(quantity);
+
+    if (isNaN(newQuantity) || newQuantity <= 0) {
+      await prisma.cartItem.delete({
+        where: { id },
+      });
+      return res.status(200).json({ message: "Item removed from cart" });
+    }
+
+    const updatedItem = await prisma.cartItem.update({
+      where: { id },
+      data: { quantity: newQuantity },
+      include: { product: true },
+    });
+
+    return res
+      .status(200)
+      .json({ message: "Quantity updated successfully", data: updatedItem });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Error updating cart quantity" });
+  }
+};
+
