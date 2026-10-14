@@ -2,6 +2,7 @@ import express from "express";
 import {
   addProduct,
   getProducts,
+  getProductsById,
   updateProduct,
   deleteProduct,
 } from "../controllers/productsController.js";
@@ -9,6 +10,8 @@ import {
 const router = express.Router();
 
 router.get("/", getProducts);
+
+router.get("/:id", getProductsById);
 
 router.post("/", addProduct);
 
