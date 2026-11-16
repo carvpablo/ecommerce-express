@@ -26,7 +26,10 @@ export const signIn = async (req: Request, res: Response) => {
     generateToken(user, res);
 
     return res.status(201).json({ message: "User created successfully" });
-  } catch (err) {
+  } catch (err: any) {
+    if (err.code === "P2002") {
+      return res.status(400).json({ error: "Email already registered" });
+    }
     return res.status(500).json({ error: "Error creating user" });
   }
 };
