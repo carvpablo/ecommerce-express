@@ -67,10 +67,12 @@ export const logIn = async (req: Request, res: Response) => {
 
 export const logOut = async (req: Request, res: Response) => {
   try {
+    const isProduction = process.env.NODE_ENV === "production";
+
     res.clearCookie("jwtToken", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
     });
 
     return res.status(200).json({ message: "Logout successful" });
