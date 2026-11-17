@@ -24,11 +24,20 @@ model User {
   order Order[]
 }
 
+enum ProductType {
+  PERIFÉRICO
+  MONITOR
+  MOUSEPAD
+  CADEIRA
+  ACESSÓRIO
+}
+
 model Product {
-  id          String      @id @default(uuid())
+  id          String       @id @default(uuid())
   name        String
   price       Int
   description String
+  type        ProductType?
   stock       Int
   cartItems   CartItem[]
   orderItems  OrderItem[]
