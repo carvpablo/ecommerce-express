@@ -45,7 +45,11 @@ export const createCheckOut = async (req: Request, res: Response) => {
         quantity: item.quantity,
       })),
       mode: "payment",
-      success_url: "https://ecommerce-react-eosin-eight.vercel.app/orders",
+      success_url:
+        process.env.NODE_ENV === "development"
+          ? "http://localhost:5173/orders"
+          : process.env.FRONTEND_URL,
+
       integration_identifier: "hosted_web_0001",
       metadata: { userId: req.user.id },
     });
